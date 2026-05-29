@@ -1,0 +1,161 @@
+# ── Serviço de Pagamentos ──────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pagamentos
+  namespace: loja-veloz
+  labels:
+    app: pagamentos
+    app.kubernetes.io/part-of: loja-veloz
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pagamentos
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: pagamentos
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port:   "8081"
+        prometheus.io/path:   "/metrics"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: pagamentos
+          image: ghcr.io/SEU_USUARIO/loja-veloz/pagamentos:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: loja-veloz-config
+          env:
+            - name: PAGAMENTO_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: loja-veloz-secrets
+                  key: PAGAMENTO_GATEWAY_TOKEN
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "400m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pagamentos-svc
+  namespace: loja-veloz
+spec:
+  type: ClusterIP
+  selector:
+    app: pagamentos
+  ports:
+    - port: 8081
+      targetPort: 8081
+---
+# ── Serviço de Estoque ─────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: estoque
+  namespace: loja-veloz
+  labels:
+    app: estoque
+    app.kubernetes.io/part-of: loja-veloz
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: estoque
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: estoque
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port:   "8082"
+        prometheus.io/path:   "/metrics"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: estoque
+          image: ghcr.io/SEU_USUARIO/loja-veloz/estoque:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8082
+          envFrom:
+            - configMapRef:
+                name: loja-veloz-config
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "400m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: estoque-svc
+  namespace: loja-veloz
+spec:
+  type: ClusterIP
+  selector:
+    app: estoque
+  ports:
+    - port: 8082
+      targetPort: 8082
