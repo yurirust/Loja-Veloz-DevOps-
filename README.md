@@ -5,12 +5,12 @@
 
 ---
 
-## 🎥 Vídeo Pitch
-📺 [Link do YouTube — inserir após gravação]
+## Vídeo Pitch
+ https://youtu.be/D7rQv9ImzJE
 
 ---
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 ```
 Cliente HTTP
@@ -68,7 +68,7 @@ loja-veloz/
 
 ---
 
-## 🚀 Subindo o Ambiente Local
+##  Subindo o Ambiente Local
 
 ### Pré-requisitos
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado
@@ -127,7 +127,7 @@ docker compose down -v       # Para e remove volumes (limpa o banco)
 
 ---
 
-## ☸️ Deploy em Kubernetes
+## Deploy em Kubernetes
 
 ### Pré-requisitos
 - `kubectl` configurado apontando para seu cluster
@@ -154,7 +154,7 @@ kubectl get pods -n loja-veloz
 
 ---
 
-## 🔄 Pipeline CI/CD
+##  Pipeline CI/CD
 
 O pipeline no GitHub Actions (`.github/workflows/ci-cd.yml`) executa automaticamente a cada push na branch `main`:
 
@@ -172,7 +172,7 @@ KUBECONFIG_B64  → kubeconfig do cluster em base64
 
 ---
 
-## 📊 Observabilidade
+##  Observabilidade
 
 ### Métricas
 - Prometheus coleta métricas de todos os serviços via `/metrics`
@@ -190,7 +190,7 @@ KUBECONFIG_B64  → kubeconfig do cluster em base64
 
 ---
 
-## 🏗️ Infraestrutura como Código (Terraform)
+## Infraestrutura como Código (Terraform)
 
 ```bash
 cd terraform
@@ -210,7 +210,7 @@ $(terraform output -raw kubectl_config_command)
 
 ---
 
-## 🔒 Segurança
+## Segurança
 
 - Todos os containers rodam como **usuário não-root**
 - Secrets Kubernetes separados do ConfigMap
@@ -221,7 +221,7 @@ $(terraform output -raw kubectl_config_command)
 
 ---
 
-## 📚 Referências
+##  Referências
 
 - [Kubernetes Docs](https://kubernetes.io/docs/)
 - [Docker Docs](https://docs.docker.com/)
